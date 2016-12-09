@@ -1,0 +1,23 @@
+{
+  "name": "foxo",
+  "homepage": "https://github.com/ScottBouloutian/foxo",
+  "authors": [
+    "Scott Bouloutian <ScottBouloutian@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "crafty": "^0.7.1",
+    "appjs": "^3.0.10",
+    "zeptojs": "^1.2.0"
+  }
+}
