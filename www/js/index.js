@@ -46,8 +46,16 @@
         location.reload();
     }
 
-    function homeController() {
-        
+    function homeController(page) {
+        $(page).find('.board').children().forEach(function (cell) {
+            var cell = $(cell);
+            cell.on('click', function () {
+                if (cell.children().length === 0) {
+                    var fox = $('<img class="fox spin-target" src="img/fox.png" />');
+                    cell.append(fox);
+                }
+            });
+        });
     }
 
     app.initialize();
