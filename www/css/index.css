@@ -14,11 +14,11 @@
 }
 
 .cell {
-    width: 71px;
-    height: 71px;
+    width: 90px;
+    height: 90px;
     background-color: #bdc3c7;
     float: left;
-    margin: 2px;
+    margin: 5px;
     border-radius: 10px;
     box-shadow: inset 5px 5px 5px 0px #95a5a6;
     display: flex;
@@ -26,11 +26,18 @@
     justify-content: center;
 }
 
-.fox {
+
+.animal {
     width: 40%;
     height: 40%;
     position: relative;
-    left: 1%;
+}
+
+.fox {
+    left: 2%;
+}
+
+.chick {
 }
 
 .spin-target {
