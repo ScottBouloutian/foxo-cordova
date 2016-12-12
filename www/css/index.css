@@ -30,9 +30,18 @@
     top: 28px;
 }
 
-.top-section img {
-    height: 100px;
-    float: left;
+.top-section {
+    text-align: center;
+    margin: 16px;
+}
+
+.top-section h3,h5 {
+    margin: 8px !important;
+}
+
+.foxo-text {
+    -webkit-animation: fadein 1s;
+    animation: fadein 1s;
 }
 
 .board {
@@ -79,6 +88,18 @@
     height: 80%;
     -webkit-animation: wiggle 0.5s infinite;
 	animation: wiggle 0.5s infinite;
+}
+
+/* Fade keyframes */
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 /* Wiggle keyframes */

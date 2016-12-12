@@ -140,7 +140,25 @@
     }
 
     // Animates foxo's win
-    function animateWinner(cells, gameState) {
+    function animateWinner(page, cells, gameState) {
+        // Change the foxo quote
+        var quotes = [
+            'Foxo wins again!',
+            'Too crafty for you.',
+            'Foxtastic!',
+            'What does the foxo say?',
+            'Better luck next time.',
+            'Foxo remains undefeated.',
+            'Foxo always wins!'
+        ];
+        var quote = quotes[Math.floor(Math.random() * quotes.length)];
+        var text = $(page).find('.foxo-text');
+        text.remove();
+        text.text(quote);
+        $(page).find('.top-section').append(text);
+
+
+        // Wiggle foxo
         gameState.line.forEach(function (index) {
             var animal = $(cells[index]).find('.animal');
             animal.addClass('winner shake-slow shake-constant');
@@ -161,7 +179,7 @@
     }
 
     // Called when the user clicks on a cell
-    function userClickedCell(cells, index, state) {
+    function userClickedCell(page, cells, index, state) {
         var cellState = state[index];
         var gameState = null;
 
@@ -179,7 +197,7 @@
                     gameState = findGameState(state);
                     if (gameState.winner === 1) {
                         setTimeout(function () {
-                            animateWinner(cells, gameState);
+                            animateWinner(page, cells, gameState);
                         }, 1000);
                     }
                 });
@@ -204,7 +222,7 @@
         // Allow cells to be clicked
         cells.forEach(function (child, index) {
             $(child).on('click', function () {
-                userClickedCell(cells, index, state);
+                userClickedCell(page, cells, index, state);
             });
         });
     }
