@@ -6,6 +6,18 @@
     top: 15px;
 }
 
+.top-section {
+    text-align: center;
+    margin: 8px;
+}
+
+.top-section h3,h5 {
+    margin: 8px !important;
+}
+
+.foxo-text {
+}
+
 .board {
     width: 300px;
     height: 300px;
@@ -43,6 +55,87 @@
 .spin-target {
   -webkit-animation: spin 1000ms linear both;
   animation: spin 1000ms linear both;
+}
+
+.winner {
+    width: 80%;
+    height: 80%;
+    -webkit-animation: wiggle 0.5s infinite;
+	animation: wiggle 0.5s infinite;
+}
+
+.game-count {
+    font-size: 32px;
+}
+
+.bottom-section {
+    display: block;
+    padding: 5px;
+}
+
+.score-section {
+    text-align: center;
+    width: 30%;
+}
+
+.score-left {
+    float: left;
+}
+
+.score-right {
+    float: right;
+}
+
+.play-button {
+    position: relative;
+    top: 9px;
+    width: 40%;
+    float: left;
+    display: none;
+}
+
+.fox-logo {
+    float: left;
+    position: relative;
+    top: 9px;
+    width: 40%;
+    text-align: center;
+}
+
+.fox-logo img {
+    width: 30%;
+    filter: grayscale(20%);
+}
+
+.fade {
+    -webkit-animation: fadein 1s;
+    animation: fadein 1s;
+}
+
+/* Fade keyframes */
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+/* Wiggle keyframes */
+
+@-webkit-keyframes wiggle {
+	0% {-webkit-transform:rotate(4deg);}
+	50% {-webkit-transform:rotate(-4deg);}
+	100% {-webkit-transform:rotate(4deg);}
+}
+
+@keyframes wiggle {
+	0% {transform:rotate(4deg);}
+	50% {transform:rotate(-4deg);}
+	100% {transform:rotate(4deg);}
 }
 
 /* Generated with Bounce.js. Edit at https://goo.gl/4Ie42D */
