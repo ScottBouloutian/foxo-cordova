@@ -54,96 +54,84 @@
             2   : It is a tie
      */
     function findGameState(state) {
-        var i;
+        var lines = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
 
-        // Check the rows and columns
-        for (i=0;i<3;i++) {
-            var first;
-            first = state[i * 3];
-            if (first !== null && state[i * 3 + 1] === first && state[i * 3 + 2] === first) {
-                return first;
-            }
-            first = state[i];
-            if (first !== null && state[3 + i] === first && state[6 + i] === first) {
-                return first;
-            }
+        function winner(state, line) {
+            var first = state[line[0]];
+            return line.map(function (index) {
+                return state[index];
+            }).every(function (element) {
+                return (element === first);
+            });
         }
 
-        // Check diagonals
-        if (state[0] !== null &&
-            state[4] === state[0] &&
-            state[8] === state[0]) {
-            return state[0];
-        }
-        if (state[2] !== null &&
-            state[4] === state[2] &&
-            state[6] === state[2]) {
-            return state[2];
-        }
-
-        // Check for a tie
-        for (i=0;i<9;i++) {
-            if (state[i] === null) {
-                return null;
+        // Check all possible win paths
+        for (var i=0;i<lines.length;i++) {
+            var line = lines[i];
+            if (winner(state, line)) {
+                return {
+                    winner: state[line[0]],
+                    line: line
+                };
             }
         }
 
-        return 2;
-    }
-
-    // Returns all children of a given state
-    function findChildren(state, player) {
-        var children = [];
-        for (var i=0;i<9;i++) {
-            if (state[i] === null) {
-                var child = state.slice();
-                child[i] = player;
-                children.push(child);
-            }
+        // Check if game is in progress
+        var progress = state.some(function (cell) {
+            return (cell === null);
+        });
+        if (progress) {
+            return {
+                winner: null
+            };
         }
-        return children;
+
+        // It is a tie
+        return {
+            winner: 2
+        };
     }
 
     // Performs an optimized minimax search algorithm
-    function minimax(state, alpha, beta, maxing) {
+    function minimax(state, depth, alpha, beta, player) {
         // Return in the case of a terminal state
         var gameState = findGameState(state);
-        switch (gameState) {
+        var factor = (player === 1) ? 1 : -1;
+        switch (gameState.winner) {
         case 0:
-            return -Number.MAX_VALUE;
+            return (depth - 100) * factor;
         case 1:
-            return Number.MAX_VALUE;
+            return (100 - depth) * factor;
         case 2:
             return 0;
         }
 
         // Perform the search
-        var v;
-        var children;
-        var i;
-        if (maxing) {
-            v = -Number.MAX_VALUE;
-            children = findChildren(state, 1);
-            for (i=0;i<children.length;i++) {
-                v = Math.max(v, minimax(children[i], alpha, beta, false));
-                alpha = Math.max(alpha, v);
-                if (beta <= alpha) {
+        var value = null;
+        var bestValue = -Number.MAX_VALUE;
+        var bestMoves = null;
+        for (var i=0;i<9;i++) {
+            if (state[i] === null) {
+                state[i] = player;
+                value = -minimax(state, depth + 1, -beta, -alpha, 1 - player);
+                state[i] = null;
+                if (value > bestValue) {
+                    bestValue = value;
+                    bestMoves = [i];
+                } else if (value === bestValue) {
+                    bestMoves.push(i);
+                }
+                alpha = Math.max(alpha, value);
+                if (alpha >= beta) {
                     break;
                 }
             }
-            return v;
-        } else {
-            v = Number.MAX_VALUE;
-            children = findChildren(state, 0);
-            for (i=0;i<children.length;i++) {
-                v = Math.min(v, minimax(children[i], alpha, beta, true));
-                beta = Math.min(beta, v);
-                if (beta <= alpha) {
-                    break;
-                }
-            }
-            return v;
         }
+        return (depth === 0) ? bestMoves : bestValue;
     }
 
     // Animates an animal being placed onto a cell
@@ -151,59 +139,67 @@
         $(cell).append('<img class="animal ' + animal + ' spin-target" src="img/' + animal + '.png" />');
     }
 
-    // Instructs Foxo to take his turn
-    function moveFoxo(state, cells) {
-        // Determine the best possible set of moves
-        foxoIsMoving = true;
-        var bestMoves = [];
-        var maxValue = -Number.MAX_VALUE;
-        for (var i=0;i<9;i++) {
-            if (state[i] === null) {
-                var child = state.slice();
-                child[i] = 1;
-                var v = minimax(child, -Number.MAX_VALUE, Number.MAX_VALUE, false);
-                if (v > maxValue) {
-                    bestMoves = [i];
-                    maxValue = v;
-                } else if (v === maxValue) {
-                    bestMoves.push(i);
-                }
-            }
-        }
+    // Animates foxo's win
+    function animateWinner(cells, gameState) {
+        gameState.line.forEach(function (index) {
+            var animal = $(cells[index]).find('.animal');
+            animal.addClass('winner shake-slow shake-constant');
+        });
+    }
 
-        // Perform the move
+    // Instructs Foxo to take his turn
+    function moveFoxo(state, cells, callback) {
+        foxoIsMoving = true;
+        var bestMoves = minimax(state, 0, -Number.MAX_VALUE, Number.MAX_VALUE, 1);
         var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
-        state[move] = 1;
-        animateMove(cells[move], 'fox');
-        foxoIsMoving = false;
+        setTimeout(function () {
+            state[move] = 1;
+            animateMove(cells[move], 'fox');
+            foxoIsMoving = false;
+            callback();
+        }, 750);
     }
 
     // Called when the user clicks on a cell
     function userClickedCell(cells, index, state) {
         var cellState = state[index];
+        var gameState = null;
 
         // If the user can make this move
-        if (findGameState(state) === null && !foxoIsMoving && cellState === null) {
+        gameState = findGameState(state);
+        if (gameState.winner === null && !foxoIsMoving && cellState === null) {
             // Perform user move
             animateMove(cells[index], 'chick');
             state[index] = 0;
 
             // Perform foxo move
-            if (findGameState(state) === null) {
-                moveFoxo(state, cells);
+            gameState = findGameState(state);
+            if (gameState.winner === null) {
+                moveFoxo(state, cells, function () {
+                    gameState = findGameState(state);
+                    if (gameState.winner === 1) {
+                        setTimeout(function () {
+                            animateWinner(cells, gameState);
+                        }, 1000);
+                    }
+                });
             }
         }
     }
 
-    var foxoIsMoving = true;
+    // Set to true whilst foxo is taking his turn
+    var foxoIsMoving = false;
 
     // The home controller
     function homeController(page) {
         var state = new Array(9).fill(null);
         var cells = $(page).find('.board').children();
 
-        // Allow Foxo to take his turn
-        moveFoxo(state, cells);
+        // Choose a random first move for foxo
+        var bestMoves = [0, 2, 4, 6, 8];
+        var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        animateMove(cells[move], 'fox');
+        state[move] = 1;
 
         // Allow cells to be clicked
         cells.forEach(function (child, index) {
