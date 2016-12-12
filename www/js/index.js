@@ -139,9 +139,8 @@
         $(cell).append('<img class="animal ' + animal + ' spin-target" src="img/' + animal + '.png" />');
     }
 
-    // Animates foxo's win
-    function animateWinner(page, cells, gameState) {
-        // Change the foxo quote
+    // Change the foxo quote
+    function changeFoxoText(page) {
         var quotes = [
             'Foxo wins again!',
             'Too crafty for you.',
@@ -156,9 +155,10 @@
         text.remove();
         text.text(quote);
         $(page).find('.top-section').append(text);
+    }
 
-
-        // Wiggle foxo
+    // Animates foxo's win
+    function animateWinner(page, cells, gameState) {
         gameState.line.forEach(function (index) {
             var animal = $(cells[index]).find('.animal');
             animal.addClass('winner shake-slow shake-constant');
@@ -166,22 +166,50 @@
     }
 
     // Instructs Foxo to take his turn
-    function moveFoxo(state, cells, callback) {
+    function moveFoxo(state, cells) {
         foxoIsMoving = true;
         var bestMoves = minimax(state, 0, -Number.MAX_VALUE, Number.MAX_VALUE, 1);
         var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        state[move] = 1;
         setTimeout(function () {
-            state[move] = 1;
             animateMove(cells[move], 'fox');
-            foxoIsMoving = false;
-            callback();
         }, 750);
+        foxoIsMoving = false;
+    }
+
+    // Updates the score
+    function updateScore(page, gameState) {
+        var tie = $(page).find('#tie-text');
+        var win = $(page).find('#win-text');
+        var storage = window.localStorage;
+        var key = 'foxo:score';
+        var score = JSON.parse(storage.getItem(key)) || {
+            tie: 0,
+            win: 0
+        };
+
+        if (gameState) {
+            switch (gameState.winner) {
+            case 1:
+                score.win++;
+                break;
+            case 2:
+                score.tie++;
+                break;
+            }
+        }
+
+        storage.setItem(key, JSON.stringify(score));
+        tie.text(score.tie);
+        win.text(score.win);
     }
 
     // Called when the user clicks on a cell
     function userClickedCell(page, cells, index, state) {
         var cellState = state[index];
         var gameState = null;
+        var foxLogo = $(page).find('.fox-logo');
+        var playButton = $(page).find('.play-button');
 
         // If the user can make this move
         gameState = findGameState(state);
@@ -193,14 +221,25 @@
             // Perform foxo move
             gameState = findGameState(state);
             if (gameState.winner === null) {
-                moveFoxo(state, cells, function () {
-                    gameState = findGameState(state);
+                moveFoxo(state, cells);
+                gameState = findGameState(state);
+                if (gameState.winner !== null) {
+                    updateScore(page, gameState);
+                    foxLogo.hide();
+                    playButton.show();
                     if (gameState.winner === 1) {
+                        setTimeout(function () {
+                            changeFoxoText(page);
+                        }, 500);
                         setTimeout(function () {
                             animateWinner(page, cells, gameState);
                         }, 1000);
                     }
-                });
+                }
+            } else {
+                updateScore(page, gameState);
+                foxLogo.hide();
+                playButton.show();
             }
         }
     }
@@ -212,6 +251,11 @@
     function homeController(page) {
         var state = new Array(9).fill(null);
         var cells = $(page).find('.board').children();
+        var foxLogo = $(page).find('.fox-logo');
+        var playButton = $(page).find('.play-button');
+
+        // Load the score
+        updateScore(page, null);
 
         // Choose a random first move for foxo
         var bestMoves = [0, 2, 4, 6, 8];
@@ -224,6 +268,19 @@
             $(child).on('click', function () {
                 userClickedCell(page, cells, index, state);
             });
+        });
+
+        // Allow the play button to be clicked
+        playButton.on('click', function () {
+            foxLogo.show();
+            playButton.hide();
+            var gameState = findGameState(state);
+            if (gameState.winner !== null && !foxoIsMoving) {
+                for (var i=0;i<9;i++) {
+                    state[i] = null;
+                    $(cells[i]).empty();
+                }
+            }
         });
     }
 
