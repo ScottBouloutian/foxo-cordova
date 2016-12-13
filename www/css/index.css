@@ -8,7 +8,7 @@
 
 .top-section {
     text-align: center;
-    margin: 8px;
+    margin: 16px;
 }
 
 .top-section h3,h5 {
@@ -16,6 +16,7 @@
 }
 
 .foxo-text {
+    color: #27ae60;
 }
 
 .board {
@@ -37,7 +38,6 @@
     align-items: center;
     justify-content: center;
 }
-
 
 .animal {
     width: 40%;
@@ -71,11 +71,16 @@
 .bottom-section {
     display: block;
     padding: 5px;
+    margin-top: 16px;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .score-section {
     text-align: center;
     width: 30%;
+    color: #95a5a6;
 }
 
 .score-left {
@@ -92,6 +97,7 @@
     width: 40%;
     float: left;
     display: none;
+    background-color: #27ae60 !important;
 }
 
 .fox-logo {
