@@ -1,3 +1,7 @@
+.app-page {
+    font-family: 'Roboto', sans-serif;
+}
+
 .app-topbar {
     padding-top: 15px;
 }
@@ -16,6 +20,7 @@
 }
 
 .foxo-text {
+    color: #27ae60;
 }
 
 .board {
@@ -37,7 +42,6 @@
     align-items: center;
     justify-content: center;
 }
-
 
 .animal {
     width: 40%;
@@ -80,6 +84,7 @@
 .score-section {
     text-align: center;
     width: 30%;
+    color: #95a5a6;
 }
 
 .score-left {
@@ -96,6 +101,7 @@
     width: 40%;
     float: left;
     display: none;
+    background-color: #27ae60 !important;
 }
 
 .fox-logo {
