@@ -97,7 +97,7 @@
     }
 
     // Performs an optimized minimax search algorithm
-    function minimax(state, depth, alpha, beta, player) {
+    function minimax(state, depth, player) {
         // Return in the case of a terminal state
         var gameState = findGameState(state);
         var factor = (player === 1) ? 1 : -1;
@@ -117,17 +117,13 @@
         for (var i=0;i<9;i++) {
             if (state[i] === null) {
                 state[i] = player;
-                value = -minimax(state, depth + 1, -beta, -alpha, 1 - player);
+                value = -minimax(state, depth + 1, 1 - player);
                 state[i] = null;
                 if (value > bestValue) {
                     bestValue = value;
                     bestMoves = [i];
                 } else if (value === bestValue) {
                     bestMoves.push(i);
-                }
-                alpha = Math.max(alpha, value);
-                if (alpha >= beta) {
-                    break;
                 }
             }
         }
@@ -168,7 +164,7 @@
     // Instructs Foxo to take his turn
     function moveFoxo(state, cells) {
         foxoIsMoving = true;
-        var bestMoves = minimax(state, 0, -Number.MAX_VALUE, Number.MAX_VALUE, 1);
+        var bestMoves = minimax(state, 0, 1);
         var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
         state[move] = 1;
         setTimeout(function () {
@@ -244,8 +240,18 @@
         }
     }
 
+    // Choose a random first move for foxo
+    function foxoFirstMove(cells, state) {
+        var bestMoves = [0, 2, 4, 6, 8];
+        var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        animateMove(cells[move], 'fox');
+        state[move] = 1;
+    }
+
     // Set to true whilst foxo is taking his turn
     var foxoIsMoving = false;
+    // Set to true if foxo is to go first
+    var foxoGoesFirst = true;
 
     // The home controller
     function homeController(page) {
@@ -257,11 +263,8 @@
         // Load the score
         updateScore(page, null);
 
-        // Choose a random first move for foxo
-        var bestMoves = [0, 2, 4, 6, 8];
-        var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
-        animateMove(cells[move], 'fox');
-        state[move] = 1;
+        // Move foxo
+        foxoFirstMove(cells, state);
 
         // Allow cells to be clicked
         cells.forEach(function (child, index) {
@@ -280,6 +283,10 @@
                     state[i] = null;
                     $(cells[i]).empty();
                 }
+            }
+            foxoGoesFirst = !foxoGoesFirst;
+            if (foxoGoesFirst) {
+                foxoFirstMove(cells, state);
             }
         });
     }
