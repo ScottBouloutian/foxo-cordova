@@ -209,8 +209,9 @@
 
         // If the user can make this move
         gameState = findGameState(state);
-        if (gameState.winner === null && !foxoIsMoving && cellState === null) {
+        if (gameState.winner === null && !foxoIsMoving && !userIsMoving && cellState === null) {
             // Perform user move
+            userIsMoving = true;
             animateMove(cells[index], 'chick');
             state[index] = 0;
 
@@ -237,6 +238,7 @@
                 foxLogo.hide();
                 playButton.show();
             }
+            userIsMoving = false;
         }
     }
 
@@ -250,6 +252,8 @@
 
     // Set to true whilst foxo is taking his turn
     var foxoIsMoving = false;
+    // Set to true whilst the user is taking their turn
+    var userIsMoving = false;
     // Set to true if foxo is to go first
     var foxoGoesFirst = true;
 

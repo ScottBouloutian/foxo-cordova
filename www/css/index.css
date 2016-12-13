@@ -8,7 +8,7 @@
 
 .top-section {
     text-align: center;
-    margin: 8px;
+    margin: 16px;
 }
 
 .top-section h3,h5 {
@@ -71,6 +71,10 @@
 .bottom-section {
     display: block;
     padding: 5px;
+    margin-top: 16px;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .score-section {
