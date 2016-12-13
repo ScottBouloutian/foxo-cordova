@@ -62,7 +62,7 @@
 
         function winner(state, line) {
             var first = state[line[0]];
-            return line.map(function (index) {
+            return (first !== null) && line.map(function (index) {
                 return state[index];
             }).every(function (element) {
                 return (element === first);
@@ -127,7 +127,11 @@
                 }
             }
         }
-        return (depth === 0) ? bestMoves : bestValue;
+        if (depth === 0) {
+            return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        } else {
+            return bestValue;
+        }
     }
 
     // Animates an animal being placed onto a cell
@@ -164,8 +168,7 @@
     // Instructs Foxo to take his turn
     function moveFoxo(state, cells) {
         foxoIsMoving = true;
-        var bestMoves = minimax(state, 0, 1);
-        var move = bestMoves[Math.floor(Math.random() * bestMoves.length)];
+        var move = minimax(state, 0, 1);
         state[move] = 1;
         setTimeout(function () {
             animateMove(cells[move], 'fox');
