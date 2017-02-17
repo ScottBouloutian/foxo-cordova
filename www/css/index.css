@@ -118,6 +118,29 @@
     animation: fadein 1s;
 }
 
+/* Information page */
+
+.profile {
+    border-radius: 10% !important;
+    float: left;
+    width: 100px;
+    height: 100px;
+    margin: 8px !important;
+}
+
+.about {
+    font-size: 14px;
+}
+
+.about .links {
+    display: inline-block;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
 /* Fade keyframes */
 
 @keyframes fadein {

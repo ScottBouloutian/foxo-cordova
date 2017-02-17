@@ -1,0 +1,16 @@
+{
+    "env": {
+        "browser": true,
+        "jquery": true
+    },
+    "globals": {
+        "cordova": true,
+        "store": true,
+        "App": true,
+        "AdMob": true
+    },
+    "extends": "airbnb-base",
+    "rules": {
+        "indent": ["error", 4]
+    }
+}
