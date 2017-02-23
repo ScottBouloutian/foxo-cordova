@@ -1,6 +1,6 @@
 {
   "name": "foxo",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Can you outsmart foxo? No, you cannot.",
   "main": "index.js",
   "scripts": {
