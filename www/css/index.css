@@ -135,6 +135,7 @@
 .about .links {
     display: inline-block;
     text-align: center;
+    width: 100%;
 }
 
 .hidden {
