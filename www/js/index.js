@@ -366,6 +366,12 @@ function infoController(page) {
             });
             store.when('foxo_remove_ads').approved(product => product.finish());
             store.when('foxo_remove_ads').updated(() => renderBanner(result.debug));
+            store.error(() => App.dialog({
+                title: 'iTunes Purchase Error',
+                text: 'We could not reach the Apple iTunes ordering server. ' +
+                    'Please ensure you are connected to the Internet and restart the app.',
+                okButton: 'Ok',
+            }));
             store.refresh();
         });
 
